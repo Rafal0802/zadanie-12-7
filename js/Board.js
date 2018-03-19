@@ -26,6 +26,20 @@ $('.create-column')
 function initSortable() {
     $('.card-list').sortable({
       connectWith: '.card-list',
-      placeholder: 'card-placeholder'
+      placeholder: 'card-placeholder',
+      receive: function(event, ui) {
+        var columnId = $(event.target).closest('[data-id]').attr('data-id'),
+            cardName = $(ui.item[0]).find('.card-description').text(),
+            cardId = $(ui.item[0]).attr('data-id');
+
+        $.ajax({
+          url: baseUrl + '/card/' + cardId,
+          method: 'PUT',
+          data: {
+            name: cardName,
+            bootcamp_kanban_column_id: columnId
+          }
+        });
+      }
     }).disableSelection();
   }
