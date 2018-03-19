@@ -7,17 +7,35 @@ function Card(id, name) {
 	this.element = createCard();
 
 	function createCard() {
-		var card = $('<li class="card"></li>');
+		var card = $('<li class="card"></li>').attr('data-id', self.id);
 		var cardDeleteBtn = $('<button class="btn-delete">x</button>');
-		var cardDescription = $('<p class="card-description"></p>');
+		var cardEditBtn = $('<button class="btn-edit">Edytuj</button>');
+		var cardDescription = $('<p class="card-description"></p>').text(self.name);
 		
 		cardDeleteBtn.click(function(){
 			self.removeCard();
 		});
+
+		cardEditBtn.click(function() {
+			var columnId = $(this).closest('.column').attr('data-id');
+
+			self.name = prompt('Podaj nową nazwę:', self.name);	
+			$(this).siblings('.card-description').text(self.name);
+
+			$.ajax({
+				url: baseUrl + '/card/' + self.id,
+				method: 'PUT',
+				data: {
+					name: self.name,
+					bootcamp_kanban_column_id: columnId
+				}
+			});
+		});
 		
-		card.append(cardDeleteBtn);
-		cardDescription.text(self.name);
-		card.append(cardDescription);
+		card.append(cardDeleteBtn)
+			.append(cardEditBtn)
+			.append(cardDescription);
+
 		return card;
 	}
 }
